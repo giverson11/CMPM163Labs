@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Lab 2: Intro to Three.js Part 2</title>
+	<style>
+		body {
+			margin: 0;
+		}
+
+		canvas {
+			display: block;
+		}
+	</style>
+</head>
+<body>
+	<script src="../three.js-master/build/three.js"></script>
+	<script src="../three.js-master/examples/js/loaders/GLTFLoader.js"></script>
+	<script>
+	var scene = new THREE.Scene();
+	var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+        var renderer = new THREE.WebGLRenderer();
+	geometry = 
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	document.body.appendChild(renderer.domElement);
+	camera.position.z = 200;
+	function getRnd(min, max) {
+        return (Math.random() * (max - min)) + min;
+      }
+	var light1 = new THREE.PointLight(0x52219A, 1, 100);
+	light1.position.set(50, 50, 50);
+	scene.add(light1);
+	var light2 = new THREE.DirectionalLight(0x640404, 1, 100);
+	light2.position.set(-50, -50, 50);
+    scene.add(light2);
+	var light3 = new THREE.PointLight(0xE5B40F, 1, 1000);
+	light3.position.set(-25, 93, -59);
+    scene.add(light3);
+	var loader = new THREE.GLTFLoader();
+	var axis1 = new THREE.Vector3(1.0, 1.0, 0.0);
+    var axis2 = new THREE.Vector3(-1.0, 1.0, 0.0);
+	var light4 = new THREE.PointLight(0x45768C, 1, 10000);
+	light4.position.set(50, 500, 200);
+    scene.add(light4);
+	loader.load(
+		'dog.glb',
+        function (gltf) {
+			gltf.scene.position.x = 50;
+			gltf.scene.rotation.y = 0;
+			gltf.scene.scale.x = 1.3;
+			gltf.scene.scale.y = 1.3;
+			gltf.scene.scale.z = 1.3;
+            scene.add(gltf.scene);
+        },
+		function (xhr) { console.log((xhr.loaded / xhr.total * 100) + '% loaded'); },
+		function (error) { console.error(error); }
+        );
+	loader.load(
+		'cat.glb',
+        function (gltf) {
+            gltf.scene.position.x = -50;
+			gltf.scene.position.z = -50;
+			gltf.scene.rotation.y = -90;
+			gltf.scene.scale.x = 1.3;
+			gltf.scene.scale.y = 1.3;
+			gltf.scene.scale.z = 1.3;
+
+            scene.add(gltf.scene);
+
+        },
+		function (xhr) { console.log((xhr.loaded / xhr.total * 100) + '% loaded'); },
+		function (error) { console.error(error); }
+        );
+	loader.load(
+		'little_lamp3.glb',
+        function (gltf) {
+            gltf.scene.position.x = 35;
+			gltf.scene.position.z = -50;
+            gltf.scene.rotation.y = -5;
+			gltf.scene.scale.x = 200.0;
+			gltf.scene.scale.y = 200.0;
+			gltf.scene.scale.z = 200.0;
+            scene.add(gltf.scene);
+        },
+		function (xhr) { console.log((xhr.loaded / xhr.total * 100) + '% loaded'); },
+		function (error) { console.error(error); }
+	);
+	function animate() {
+		light1.parent.localToWorld(light1.position);
+		light1.position.applyAxisAngle(axis1, -0.01); // rotate the POSITION
+		light1.parent.worldToLocal(light1.position);
+		light2.parent.localToWorld(light2.position);
+		light2.position.applyAxisAngle(axis2, 0.01); // rotate the POSITION
+		light2.parent.worldToLocal(light2.position);
+		requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+	}
+	animate();
+
+	</script>
+</body>
+</html>
