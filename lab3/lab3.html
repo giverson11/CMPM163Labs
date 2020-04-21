@@ -1,0 +1,173 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Lab 3: Shaders in Three.js</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <script src="../three.js-master/build/three.js"></script>
+    <script>
+        // setup the scene
+        function getRnd(min, max) {
+            return (Math.random() * (max - min)) + min;
+        }
+        THREE.Cache.enabled = true;
+        var count = 0;
+        var count1 = 0;
+        var loader = new THREE.FileLoader();
+        var fragLava, vertLava, fragCool, vertCool;
+        var geoLava, matLava, meshLava, geoCool, matCool, meshCool;
+        var time = new THREE.Clock();
+        var uniforms = {
+            colorB: { type: 'vec3', value: new THREE.Color(0xACB6E5) },
+            colorA: { type: 'vec3', value: new THREE.Color(0x74ebd5) },
+            u_time: { type: 'f', value: 1.0 },
+            u_D2: { type: 'f', value: 0.5 },
+            u_D4: { type: 'f', value: 2.0 },
+        };
+        var uniforms1 = {
+            colorB: { type: 'vec3', value: new THREE.Color(0xACB6E5) },
+            colorA: { type: 'vec3', value: new THREE.Color(0x74ebd5) },
+        };
+        function addLavaCube() {
+            if (count == 2) {
+                console.log("suh");
+                geoLava = new THREE.BoxGeometry(1, 1, 1);
+                matLava = new THREE.ShaderMaterial({
+                    uniforms: uniforms,
+                    fragmentShader: fragLava,
+                    vertexShader: vertLava
+                });
+
+                meshLava = new THREE.Mesh(geoLava, matLava);
+                meshLava.position.x = 2;
+                scene.add(meshLava);
+            }
+        }
+        function addCoolCube() {
+            if (count1 == 2) {
+                console.log("suh");
+                geoCool = new THREE.BoxGeometry(1, 1, 1);
+                matCool = new THREE.ShaderMaterial({
+                    uniforms: uniforms1,
+                    fragmentShader: fragCool,
+                    vertexShader: vertCool
+                });
+
+                meshCool = new THREE.Mesh(geoCool, matCool);
+                meshCool.position.set(-2, 0, 0);
+                scene.add(meshCool);
+            }
+        }
+        loader.load('shaders/vertexShader.vert',
+            // onLoad callback
+            function (data) {
+                console.log(data); // output the text to the console
+                vertLava = data;
+                count += 1;
+                addLavaCube(); // we will write this method
+            },
+            // onProgress callback
+            function (xhr) {
+                console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+            },
+            // onError callback
+            function (err) {
+                console.error('An error happened');
+            });
+        loader.load('shaders/fragmentShader.frag',
+            // onLoad callback
+            function (data) {
+                console.log(data); // output the text to the console
+                fragLava = data;
+                count += 1;
+                addLavaCube(); // we will write this method
+            },);
+        loader.load('shaders/vertexShader1.vert',
+            // onLoad callback
+            function (data) {
+                console.log(data); // output the text to the console
+                vertCool = data;
+                count1 += 1;
+                addCoolCube(); // we will write this method
+            },
+            // onProgress callback
+            function (xhr) {
+                console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+            },
+            // onError callback
+            function (err) {
+                console.error('An error happened');
+            });
+        loader.load('shaders/fragmentShader1.frag',
+            // onLoad callback
+            function (data) {
+                console.log(data); // output the text to the console
+                fragCool = data;
+                count1 += 1;
+                addCoolCube(); // we will write this method
+            },
+            // onProgress callback
+            function (xhr) {
+                console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+            },
+            // onError callback
+            function (err) {
+                console.error('An error happened');
+            });
+
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(75,
+            window.innerWidth / window.innerHeight, 0.1, 1000);
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        camera.position.z = 5;
+        // setup the cube
+        var geometry = new THREE.BoxGeometry();
+        var material = new THREE.MeshPhongMaterial({
+            color: 0xdddddd,
+            specular: 0x00ff00, shininess: 30
+        });
+        var geoPhys = new THREE.BoxGeometry(1, 1, 1);
+        var matPhys = new THREE.MeshBasicMaterial({ color: 0xffaa00, wireframe: true });
+        var cube = new THREE.Mesh(geometry, material);
+        var cube1 = new THREE.Mesh(geoPhys, matPhys);
+        cube1.position.set(-4, 0, 0);
+        scene.add(cube);
+        scene.add(cube1);
+        // add the light
+        var light = new THREE.PointLight(0xffffff, 1, 1000);
+        light.position.set(10, 10, 10);
+        scene.add(light);
+        function animate() {
+            var delta = time.getDelta();
+            uniforms["u_time"].value += delta * 5;
+            requestAnimationFrame(animate);
+            geometry.rotateX(0.01);
+            geometry.rotateY(0.01);
+            if (geoLava) {
+                geoLava.rotateX(getRnd(0.0, 0.01));
+                geoLava.rotateY(getRnd(0.0, 0.01));
+                geoLava.rotateZ(getRnd(0.0, 0.01));
+            }
+            geoPhys.rotateX(0.01);
+            geoPhys.rotateY(0.01);
+            geoCool.rotateX(0.01);
+            geoCool.rotateY(0.01);
+            renderer.render(scene, camera);
+        }
+        animate();
+
+    </script>
+</body>
+</html>
