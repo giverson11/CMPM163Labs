@@ -46,7 +46,12 @@
         camera.position.z = 5;
 
         // setup the cube
-        var texture = THREE.ImageUtils.loadTexture("193.jpg");
+        var texload = new THREE.TextureLoader(); //256, 256
+        var texture = texload.load("ArtilleryFront_0_Fuel.PNG");
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set(1 / 9, 1 / 8);
+        texture.center.set(0.1, 0.0)
         var normMap = THREE.ImageUtils.loadTexture("193_norm.jpg");
         var texture1 = THREE.ImageUtils.loadTexture("171.jpg");
         var normMap1 = THREE.ImageUtils.loadTexture("196_norm.jpg");
@@ -71,7 +76,7 @@
 
         function addTextureShaderCube() {
             if (count == 2) {
-                var uniforms = { texture1: { type: "t", value: THREE.ImageUtils.loadTexture("171.jpg") } };
+                var uniforms = { texture1: { type: "t", value: texture } };
 
                 geometry1 = new THREE.BoxGeometry(1, 1, 1);
                 material2 = new THREE.ShaderMaterial({
@@ -104,7 +109,7 @@
             
         }
 
-        loader.load('shaders/vertexShader.vert',
+        loader.load('shaders1/vertexShader.vert',
             // onLoad callback
             function (data) {
                 console.log(data); // output the text to the console
@@ -121,7 +126,7 @@
                 console.error('An error happened');
             });
 
-        loader.load('shaders/fragmentShader.frag',
+        loader.load('shaders1/fragmentShader.frag',
             // onLoad callback
             function (data) {
                 console.log(data); // output the text to the console

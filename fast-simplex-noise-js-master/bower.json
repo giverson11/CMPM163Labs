@@ -1,0 +1,17 @@
+{
+  "name": "simplexnoise.js",
+  "version": "0.2.0",
+  "authors": [
+    "Matthias De Vriendt (fauxnoir) <devriendt.matthias@gmail.com>"
+  ],
+  "description": "Generate Simplex Noise",
+  "keywords": [
+    "simplexnoise"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ]
+}

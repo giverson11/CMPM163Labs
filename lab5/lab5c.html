@@ -1,0 +1,160 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Lab 5b: Choose Your Own Particle Adventure</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <script src="../three.js-master/build/three.js"></script>
+    <script src="../fast-simplex-noise-js-master/fast-simplex-noise.js"></script>
+    <script id="vertexShader" type="x-shader/x-vertex">
+        varying vec3 vertpos;
+        uniform float u_time;
+
+        void main() {
+
+        vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
+        vertpos = vec3(modelViewPosition) / modelViewPosition.w;
+        gl_PointSize = 2000./length(modelViewPosition)*0.2;
+        gl_Position = projectionMatrix * modelViewPosition;
+        }
+
+    </script>
+
+    <script id="fragmentShader" type="x-shader/x-fragment">
+        // code for fragment shader
+        uniform sampler2D texture1;
+        uniform vec3 u_light;
+        uniform vec3 u_pos;
+        varying vec3 vertpos;
+
+        void main() {
+        vec3 L = normalize(vertpos - u_pos);
+        vec3 L2 = normalize(vertpos - vec3(20, -20, -60));
+        vec3 N = normalize(vec3(0.0, 0.0, -1.0));
+        float dist = length(u_pos - vertpos)*length(u_pos - vertpos);
+        float lam = max(dot(N,L), 0.0);
+        vec4 dark = vec4(9000.0/dist, 9000.0/dist, 9000.0/dist, 1.0);
+        vec4 col = vec4(u_light, lam);
+        vec4 tex = texture2D(texture1, gl_PointCoord);
+        gl_FragColor =  col*tex*dark;
+        }
+
+    </script>
+    <script>
+        // setup the scene
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(75,
+            window.innerWidth / window.innerHeight, 0.1, 1000);
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        camera.position.z = 60;
+        var time = new THREE.Clock();
+        var sim = new FastSimplexNoise();
+        var texload = new THREE.TextureLoader(); //256, 256
+        var texture1 = texload.load("snow.png");
+        particles = []
+        const geo = new THREE.Geometry()
+        for (let i = 0; i < 100000; i++) {
+            const particle = {
+                position: new THREE.Vector3(
+                    (Math.random() * 130) - (Math.random() * 130),
+                    (Math.random() * 200) + 60,
+                    (Math.random() * 100) - (Math.random() * 150)),
+                velocity: new THREE.Vector3(
+                    Math.random()*0.35-Math.random()*0.35,
+                    -Math.random()*0.45,
+                    Math.random()*0.35-Math.random()*0.35),
+                acceleration: new THREE.Vector3(
+                    0,
+                    0,
+                    0)
+            }
+            particles.push(particle);
+            geo.vertices.push(particle.position)
+        }
+        var uniforms = {
+            texture1: { type: "t", value: texture1 },
+            u_time: { type: 'f', value: 1.0 },
+            u_pos: { type: 'vec3', value: (new THREE.Vector3(0.0, 0.0, 0.0)) },
+            u_light: { type: 'vec3', value: (new THREE.Color(0.8,1.0,0.9)) }
+        };
+        var mat = new THREE.ShaderMaterial({
+            uniforms: uniforms,
+            vertexShader: document.getElementById('vertexShader').textContent,
+            fragmentShader: document.getElementById('fragmentShader').textContent,
+            precision: "mediump",
+            blending: THREE.AdditiveBlending,
+			depthTest: false,
+			transparent: true
+        });
+        mesh = new THREE.Points(geo, mat);
+        console.log(mesh.faces);
+        mesh.position.z = -4;
+        scene.add(mesh);
+        var ran1 = (Math.random() - Math.random());
+        var ran2 = (Math.random() - Math.random());
+        var ran3 = (Math.random() - Math.random());
+        let wnoisex1 = sim.get3DNoise(ran1, ran2, ran3);
+        let wnoisey1 = sim.get3DNoise(ran1 + 100, ran2 + 100, ran3 + 100);
+        let wnoisez1 = sim.get3DNoise(ran1 + 200, ran2 + 200, ran3 + 200);
+        var wind = new THREE.Vector3(wnoisex1*1.75, wnoisey1*0.15, wnoisez1*0.15);
+        wind.multiplyScalar(0.0075);
+        THREE.Cache.enabled;
+        function animate() {
+            var n_max = -9999;
+            var time = (Date.now() * 0.00005) % 1.0;
+            var max_n = -999999;
+            if (time > 0.91 && time < 0.92) {
+                var windx1 = wind.getComponent(0);
+                var windy1 = wind.getComponent(1);
+                var windz1 = wind.getComponent(2);
+                let wnoisex2 = sim.get4DNoise(windx1, windy1, windz1, Date.now() * 0.00005);
+                let wnoisey2 = sim.get4DNoise(windx1 + 100, windy1 + 100, windz1 + 100, Date.now() * 0.00005 + 100);
+                let wnoisez2 = sim.get4DNoise(windx1 + 200, windy1 + 200, windz1 + 200, Date.now() * 0.00005 + 200);
+                wind.set(wnoisex2*1.75, wnoisey2*0.15, wnoisez2*0.15);
+                wind.multiplyScalar(0.0075);
+            }
+            particles.forEach(p => {
+                if ((Math.abs(p.position.getComponent(0)) > 350) || (p.position.getComponent(1) < -50) || Math.abs(p.position.getComponent(2)) > 200) {
+                    var windx = wind.getComponent(0);
+                    var windy = wind.getComponent(1);
+                    var windz = wind.getComponent(2);
+                    let wnoisex = sim.get3DNoise(windx, windy, windz);
+                    let wnoisey = sim.get3DNoise(windx + 100, windy + 100, windz + 100);
+                    let wnoisez = sim.get3DNoise(windx + 200, windy + 200, windz + 200);
+                    p.position.set((Math.random() * 150) - (Math.random() * 150) - windx*8000, (Math.random() * 35) + 55 - Math.abs(windx*2000) - Math.abs(windz*7500), (Math.random() * 100) - (Math.random() * 150) - windz*20000);
+                    p.position.set((Math.random() * 150) - (Math.random() * 150) - windx*8000, 85 - Math.abs(windx*3000) - Math.abs(windz*8500), (Math.random() * 100) - (Math.random() * 150) - windz*10000);
+                    p.velocity.set(2.0*wnoisex, -0.35-2.0*(wnoisey**2), 2.0*wnoisez);
+                    if (max_n < (-windz * 10000)){
+                        max_n = -windz * 10000;
+                    }
+                }
+                let noisex = sim.get3DNoise(p.position.getComponent(0), p.position.getComponent(1), p.position.getComponent(2));
+                let noisey = sim.get3DNoise(p.position.getComponent(0) + 100, p.position.getComponent(1) + 100, p.position.getComponent(2) + 100);
+                let noisez = sim.get3DNoise(p.position.getComponent(0) + 200, p.position.getComponent(1) + 200, p.position.getComponent(2) + 200);
+                p.acceleration.set(10.0 * noisex, -0.75 - 3.0*noisey,  10.0*noisez);
+                p.acceleration.multiplyScalar(0.0035);
+                p.acceleration.add(wind);
+                p.velocity.add(p.acceleration);
+                p.position.add(p.velocity);
+            });
+            console.log(max_n);
+            mesh.geometry.verticesNeedUpdate = true;
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>

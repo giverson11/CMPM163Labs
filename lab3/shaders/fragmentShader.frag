@@ -85,6 +85,5 @@ void main() {
   float green = abs( sin( position.x * position.y + u_time / 4.0)  + 0.5*spos);
   float blue = abs( cos( position.x * position.y + u_time / 3.0) + 0.3*spos);
   vec4 color = vec4( red, green, blue, 1.0 );
-  color *= smoothstep(.15,.3,spos); // Black splatter
   gl_FragColor = color;
 }

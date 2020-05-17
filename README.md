@@ -39,3 +39,13 @@ b. y = fy(v) -> {rounddown(8*(1-v)) (v != 1.0)
 c. fx(0.375) = rounddown(0.375*8) = 3
    fy(0.25) =  rounddown(8*(1-0.25))= 6
    (3,6) grid = white
+   ------------------------------------------------------------------------
+   LAB5
+   ------------------------------------------------------------------------
+   Part2:
+   Lab5a: https://drive.google.com/open?id=1OlP9ZceEqPvpzUJ2mUPPYQHwcNROX7Nw
+   Lab5b: https://drive.google.com/open?id=1wdZ9wDND-ed38hkMPPz0rRn4Q61g8OTW
+   Custom Particle: https://drive.google.com/open?id=1ueijG56YkcJWAx-PNyrZmK4Uh00v0gAJ
+   My custom particle was a snow effect using simplex noise for distribution, wind, and air resistance in order to get an output that looked similar to snow.
+   Wind changes dynamically during the program and each particle's size is determined by its distance from the camera. Also the particles translucency is determined by
+   a light placed behind the camera, which increase as the snow drifts away from the light. Not the most efficient of programs, but I didnt want to screw with buffers.
