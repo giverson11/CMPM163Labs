@@ -1,13 +1,13 @@
 # CMPM163Labs
 
 
-LAB2
+LAB 2
 ------------------------------------------------------------------------
 Part1:https://drive.google.com/open?id=15HSsHdradaDTHRmVrrzksoCouMAxyoWD
 __________Part2:https://drive.google.com/open?id=1qK6mUiT5SbHChU7VXLHxE5Jm4yQ8NH46
 https://drive.google.com/open?id=1Ia1bDh9WOfuDdmmM7_bqfahEfvavBh3m
 ------------------------------------------------------------------------
-LAB3
+LAB 3
 ------------------------------------------------------------------------
 https://drive.google.com/open?id=1CuTb58CfGz0LbGdSclJMYN2yylLVw9oe
 The leftmost square is a THREE basic mesh material with a wireframe and a yellow color.
@@ -21,7 +21,7 @@ is done completely with shaders.
 Sources:https://thebookofshaders.com/glossary/?search=smoothstep
 https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83
 ------------------------------------------------------------------------
-LAB4
+LAB 4
 ------------------------------------------------------------------------
 https://drive.google.com/open?id=1Mz-vJvsf3JqBUoizsRmSKHxB9FObhEDb
 CUBE 1: Cube created with basic THREE material with texture 193 added. (middle lower)
@@ -39,9 +39,9 @@ b. y = fy(v) -> {rounddown(8*(1-v)) (v != 1.0)
 c. fx(0.375) = rounddown(0.375*8) = 3
    fy(0.25) =  rounddown(8*(1-0.25))= 6
    (3,6) grid = white
-   ------------------------------------------------------------------------
-   LAB5
-   ------------------------------------------------------------------------
+------------------------------------------------------------------------
+LAB 5
+------------------------------------------------------------------------
    Part2:
    Lab5a: https://drive.google.com/open?id=1OlP9ZceEqPvpzUJ2mUPPYQHwcNROX7Nw
    Lab5b: https://drive.google.com/open?id=1wdZ9wDND-ed38hkMPPz0rRn4Q61g8OTW
@@ -49,3 +49,14 @@ c. fx(0.375) = rounddown(0.375*8) = 3
    My custom particle was a snow effect using simplex noise for distribution, wind, and air resistance in order to get an output that looked similar to snow.
    Wind changes dynamically during the program and each particle's size is determined by its distance from the camera. Also the particles translucency is determined by
    a light placed behind the camera, which increase as the snow drifts away from the light. Not the most efficient of programs, but I didnt want to screw with buffers.
+------------------------------------------------------------------------
+LAB 7-8
+------------------------------------------------------------------------
+https://drive.google.com/file/d/1uZo6ahfL4OqOIs0t1yxtMTxj4vEThrjt/view?usp=sharing
+This is a combination of labs 7 and 8. For lab 7 I created a procedurally generated vertices based off the given perlin texture as a probability map along with another snoise
+library. I then convert the vertices into a single mesh of triangles using a Delaunay triangles library, and then gave it some water like movement and tides using noise/wave functions
+I got off shadertoy. I attempted to do it without using ray tracing to avoid to many complications so it doesnt look perfect, but I need to work on my final.
+
+Lab 8 I created the city based off this https://nextcity.org/images/uploads/_resized/6642874991_9b68764995_b.jpg (I believe its New York but I could be wrong). I wanted to simulate
+poverty measures and different business districts, as you leave richer high rises and enter the outer industrial poorer areas. I used perlin noise as a probability map to to this.
+Lastly I create a park/nature area with trees generated the same way.

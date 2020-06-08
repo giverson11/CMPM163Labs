@@ -1,0 +1,16 @@
+                        for (var i = 0; (i < 20 * N); i++) {
+                            let x = (c + i * Math.random() + 2 * Math.PI);
+                            let y = (r + 0.5 + Math.random() * 2 * Math.PI);
+                            if (x >= planeSize / 2 || y >= planeSize / 2) {
+                                break;
+                            }
+                            var N2 = Math.abs(sim.get4DNoise(y, x, noiseData[r + planeSize / 2], noiseData[c + planeSize / 2]));
+                            cube.scale.x = N2 * 0.3 + Math.random() ** 2;
+                            cube.scale.z = N2 * 0.3 + Math.random() ** 2;
+                            cube.scale.y = N2 / 2;
+                            cube.position.z = planeCenter.z + x + cube.scale.z / 10.0;
+                            cube.position.x = y + cube.scale.x / 10.0;
+                            cube.position.y = planeCenter.y + cube.scale.y / 2;
+                            var newcube = cube.clone();
+                            scene.add(newcube);
+                        }
